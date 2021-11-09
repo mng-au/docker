@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  dashy:
+    image: lissy93/dashy:latest
+    ports:
+      - 30020:80
+    volumes:
+      - /data/dashy/conf.yml:/app/public/conf.yml
+      - /data/dashy/icons:/app/public/item-icons
+    restart: unless-stopped
