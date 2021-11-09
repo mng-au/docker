@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  freshrss_postgresql:
+    image: postgres:12
+    volumes:
+      - /data/freshrss/database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "30006:5432"
+    restart: unless-stopped
+
+  freshrss:
+    image: freshrss/freshrss
+    ports:
+      - "30005:80"
+    depends_on:
+      - freshrss_postgresql
+    volumes:
+      - /data/freshrss/data:/var/www/FreshRSS/data
+      - /data/freshrss/extensions:/var/www/FreshRSS/extensions
+    environment:
+      - CRON_MIN=*/20
+      - TZ=Australia/Sydney
+    restart: unless-stopped
