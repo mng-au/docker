@@ -11,7 +11,7 @@ services:
     # Disable MongoDB logs:
     command: mongod --logpath /dev/null --oplogSize 128 --quiet
     volumes:
-      - /data/wekan:/data/db
+      - /data/wekan/db:/data/db
       - /data/wekan/db-dump:/dump
 
   wekan:
@@ -22,7 +22,7 @@ services:
       - 30018:8080
     environment:
       - MONGO_URL=mongodb://wekandb:27017/wekan
-      - ROOT_URL={ROOT_URL}
+      - ROOT_URL=${ROOT_URL}
       #---------------------------------------------------------------
       # ==== WEKAN API AND EXPORT BOARD ====
       # Wekan Export Board works when WITH_API=true.
