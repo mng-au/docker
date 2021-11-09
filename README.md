@@ -1,0 +1,1 @@
+All docker-compose.yml files are using ARM docker images, except files in `amd64` folder.
