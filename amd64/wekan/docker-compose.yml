@@ -1,0 +1,68 @@
+# See https://github.com/wekan/wekan/blob/master/docker-compose.yml
+
+version: "3.6"
+services:
+  wekandb:
+    image: mongo:4.4
+    container_name: wekan-db
+    restart: always
+    # command: mongod --oplogSize 128
+    # Syslog: mongod --syslog --oplogSize 128 --quiet
+    # Disable MongoDB logs:
+    command: mongod --logpath /dev/null --oplogSize 128 --quiet
+    volumes:
+      - /data/wekan:/data/db
+      - /data/wekan/db-dump:/dump
+
+  wekan:
+    image: quay.io/wekan/wekan
+    container_name: wekan-app
+    restart: always
+    ports:
+      - 30018:8080
+    environment:
+      - MONGO_URL=mongodb://wekandb:27017/wekan
+      - ROOT_URL={ROOT_URL}
+      #---------------------------------------------------------------
+      # ==== WEKAN API AND EXPORT BOARD ====
+      # Wekan Export Board works when WITH_API=true.
+      # https://github.com/wekan/wekan/wiki/REST-API
+      # https://github.com/wekan/wekan-gogs
+      # If you disable Wekan API with false, Export Board does not work.
+      - WITH_API=true
+      #---------------------------------------------------------------
+      # ==== RICH TEXT EDITOR IN CARD COMMENTS ====
+      # https://github.com/wekan/wekan/pull/2560
+      - RICHER_CARD_COMMENT_EDITOR=false
+      #---------------------------------------------------------------
+      # ==== CARD OPENED, SEND WEBHOOK MESSAGE ====
+      # https://github.com/wekan/wekan/issues/2518
+      - CARD_OPENED_WEBHOOK_ENABLED=false
+      #---------------------------------------------------------------
+      # ==== BIGEVENTS DUE ETC NOTIFICATIONS =====
+      # https://github.com/wekan/wekan/pull/2541
+      # Introduced a system env var BIGEVENTS_PATTERN default as "NONE",
+      # so any activityType matches the pattern, system will send out
+      # notifications to all board members no matter they are watching
+      # or tracking the board or not. Owner of the wekan server can
+      # disable the feature by setting this variable to "NONE" or
+      # change the pattern to any valid regex. i.e. '|' delimited
+      # activityType names.
+      # a) Example
+      #- BIGEVENTS_PATTERN=due
+      # b) All
+      #- BIGEVENTS_PATTERN=received|start|due|end
+      # c) Disabled
+      - BIGEVENTS_PATTERN=NONE
+      #-----------------------------------------------------------------
+      # ==== BROWSER POLICY AND TRUSTED IFRAME URL ====
+      # Enable browser policy and allow one trusted URL that can have iframe that has Wekan embedded inside.
+      # Setting this to false is not recommended, it also disables all other browser policy protections
+      # and allows all iframing etc. See wekan/server/policy.js
+      - BROWSER_POLICY_ENABLED=true
+      # When browser policy is enabled, HTML code at this Trusted URL can have iframe that embeds Wekan inside.
+      #- TRUSTED_URL=https://intra.example.com
+      #-----------------------------------------------------------------
+
+    depends_on:
+      - wekandb
