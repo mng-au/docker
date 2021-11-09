@@ -1,0 +1,30 @@
+version: "3.6"
+
+services:
+  app:
+    image: monica:latest
+    depends_on:
+      - db
+    ports:
+      - 30028:80
+    environment:
+      - APP_TRUSTED_PROXIES=${APP_TRUSTED_PROXIES}
+      - APP_KEY=${APP_KEY}
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - /data/monica/data:/var/www/html/storage
+    restart: always
+
+  db:
+    image: mariadb:10.6
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - /data/monica/mysql:/var/lib/mysql
+    restart: always
