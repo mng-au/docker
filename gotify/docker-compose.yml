@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  gotify:
+    image: gotify/server
+    ports:
+      - 30027:80
+    environment:
+      - GOTIFY_DEFAULTUSER_PASS=${GOTIFY_DEFAULTUSER_PASS}
+    volumes:
+      - /data/gotify/data:/app/data
+    restart: unless-stopped
