@@ -1,0 +1,9 @@
+{
+  "db": {
+    "host": "db"
+  },
+  "maxSyncSize": 5120000,
+  "status": {
+    "allowNewSyncs": true
+  }
+}
