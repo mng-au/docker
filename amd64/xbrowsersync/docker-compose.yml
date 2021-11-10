@@ -15,8 +15,8 @@ services:
     image: "mongo:4.4.4"
     restart: "unless-stopped"
     volumes:
-      - "/data/xbs/data:/data/db"
-      - "/data/xbs/backups:/data/backups"
+      - "/data/xbrowsersync/data:/data/db"
+      - "/data/xbrowsersync/backups:/data/backups"
       - "./mongoconfig.js:/docker-entrypoint-initdb.d/mongoconfig.js"
 
   api:
